@@ -62,12 +62,6 @@ class Replacement_Table_Test(unittest.TestCase):
             '10111110100000000111011111010101'
         )
 
-    def test_check_replacement_table_2(self):
-        self.assertEqual(
-            Magma_functions.replacement_table(bin(0xfdb97531)[2:]),
-            Magma_functions.fix_bin(0x2a196f34, 32)
-        )
-
 class Summ_Mod_2_Step_32_Test(unittest.TestCase):
     def test_check_summ_mod_2_step_32(self):
         self.assertEqual(
@@ -76,24 +70,24 @@ class Summ_Mod_2_Step_32_Test(unittest.TestCase):
         )
 
 class g_Test(unittest.TestCase):
-    def test_check_g(self):
+    def test_check_g_1(self):
         self.assertEqual(
-            Magma_functions.g(),
-            12
+            Magma_functions.g(0x87654321, 0xfedcba98),
+            Magma_functions.fix_bin(0xfdcbc20c, 32)
         )
 
 class G_Test(unittest.TestCase):
     def test_check_G(self):
         self.assertEqual(
-            Magma_functions.G(),
-            12
+            Magma_functions.G(0xffeeddcc, 0xfedcba98, 0x76543210),
+            (Magma_functions.fix_bin(0x76543210, 32), Magma_functions.fix_bin(0x28da3b14, 32))
         )
 
 class G_Star_Test(unittest.TestCase):
     def test_check_G_star(self):
         self.assertEqual(
-            Magma_functions.G_star(),
-            12
+            Magma_functions.G_star(0xffeeddcc, 0x239a4577, 0xc2d8ca3d),
+            Magma_functions.fix_bin(0x4ee901e5c2d8ca3d, 64)
         )
 
 class Get_Encrypt_Keys_Test(unittest.TestCase):
@@ -116,8 +110,8 @@ class Get_Encrypt_Keys_Test(unittest.TestCase):
 class Encrypt_Test(unittest.TestCase):
     def test_check_encrypt(self):
         self.assertEqual(
-            Magma_functions.encrypt(),
-            12
+            Magma_functions.encrypt(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0xfedcba9876543210),
+            Magma_functions.fix_bin(0x4ee901e5c2d8ca3d, 64)
         )
 
 class Get_Decrypt_Keys_Test(unittest.TestCase):
@@ -140,8 +134,85 @@ class Get_Decrypt_Keys_Test(unittest.TestCase):
 class Decrypt_Test(unittest.TestCase):
     def test_check_decrypt(self):
         self.assertEqual(
-            Magma_functions.decrypt(),
-            12
+            Magma_functions.decrypt(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0x4ee901e5c2d8ca3d),
+            Magma_functions.fix_bin(0xfedcba9876543210, 64)
+        )
+
+class GOST_Test(unittest.TestCase):
+    def test_check_replacement_table_1(self):
+        self.assertEqual(
+            Magma_functions.replacement_table(Magma_functions.fix_bin(0xfdb97531, 32)),
+            Magma_functions.fix_bin(0x2a196f34, 32)
+        )
+
+    def test_check_replacement_table_2(self):
+        self.assertEqual(
+            Magma_functions.replacement_table(Magma_functions.fix_bin(0x2a196f34, 32)),
+            Magma_functions.fix_bin(0xebd9f03a, 32)
+        )
+    
+    def test_check_replacement_table_3(self):
+        self.assertEqual(
+            Magma_functions.replacement_table(Magma_functions.fix_bin(0xebd9f03a, 32)),
+            Magma_functions.fix_bin(0xb039bb3d, 32)
+        )
+    
+    def test_check_replacement_table_4(self):
+        self.assertEqual(
+            Magma_functions.replacement_table(Magma_functions.fix_bin(0xb039bb3d, 32)),
+            Magma_functions.fix_bin(0x68695433, 32)
+        )
+    
+    def test_check_g_1(self):
+        self.assertEqual(
+            Magma_functions.g(0x87654321, 0xfedcba98),
+            Magma_functions.fix_bin(0xfdcbc20c, 32)
+        )
+    
+    def test_check_g_2(self):
+        self.assertEqual(
+            Magma_functions.g(0xfdcbc20c, 0x87654321),
+            Magma_functions.fix_bin(0x7e791a4b, 32)
+        )
+    
+    def test_check_g_3(self):
+        self.assertEqual(
+            Magma_functions.g(0x7e791a4b, 0xfdcbc20c),
+            Magma_functions.fix_bin(0xc76549ec, 32)
+        )
+    
+    def test_check_g_4(self):
+        self.assertEqual(
+            Magma_functions.g(0xc76549ec, 0x7e791a4b),
+            Magma_functions.fix_bin(0x9791c849, 32)
+        )
+    
+    def test_check_get_encrypt_keys(self):
+        k_lst = Magma_functions.gen_key_list(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff)
+        a = [Magma_functions.fix_bin(0xffeeddcc, 32), Magma_functions.fix_bin(0xbbaa9988, 32), Magma_functions.fix_bin(0x77665544, 32), Magma_functions.fix_bin(0x33221100, 32),
+            Magma_functions.fix_bin(0xf0f1f2f3, 32), Magma_functions.fix_bin(0xf4f5f6f7, 32), Magma_functions.fix_bin(0xf8f9fafb, 32), Magma_functions.fix_bin(0xfcfdfeff, 32)]
+        b = a.copy()
+        b.reverse()
+        lst = []
+        lst.extend(a)
+        lst.extend(a)
+        lst.extend(a)
+        lst.extend(b)
+        self.assertEqual(
+            Magma_functions.get_encrypt_keys(k_lst),
+            lst
+        )
+
+    def test_check_encrypt(self):
+        self.assertEqual(
+            Magma_functions.encrypt(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0xfedcba9876543210),
+            Magma_functions.fix_bin(0x4ee901e5c2d8ca3d, 64)
+        )
+    
+    def test_check_decrypt(self):
+        self.assertEqual(
+            Magma_functions.decrypt(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0x4ee901e5c2d8ca3d),
+            Magma_functions.fix_bin(0xfedcba9876543210, 64)
         )
 
 if __name__ == '__main__':
