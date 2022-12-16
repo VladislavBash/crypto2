@@ -107,10 +107,10 @@ class Get_Encrypt_Keys_Test(unittest.TestCase):
             lst
         )
 
-class Encrypt_Test(unittest.TestCase):
-    def test_check_encrypt(self):
+class Encrypt_Block_Test(unittest.TestCase):
+    def test_check_encrypt_block(self):
         self.assertEqual(
-            Magma_functions.encrypt(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0xfedcba9876543210),
+            Magma_functions.encrypt_block(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0xfedcba9876543210),
             Magma_functions.fix_bin(0x4ee901e5c2d8ca3d, 64)
         )
 
@@ -131,10 +131,10 @@ class Get_Decrypt_Keys_Test(unittest.TestCase):
             lst
         )
 
-class Decrypt_Test(unittest.TestCase):
-    def test_check_decrypt(self):
+class Decrypt_Block_Test(unittest.TestCase):
+    def test_check_decrypt_block(self):
         self.assertEqual(
-            Magma_functions.decrypt(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0x4ee901e5c2d8ca3d),
+            Magma_functions.decrypt_block(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0x4ee901e5c2d8ca3d),
             Magma_functions.fix_bin(0xfedcba9876543210, 64)
         )
 
@@ -203,15 +203,15 @@ class GOST_Test(unittest.TestCase):
             lst
         )
 
-    def test_check_encrypt(self):
+    def test_check_encrypt_block(self):
         self.assertEqual(
-            Magma_functions.encrypt(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0xfedcba9876543210),
+            Magma_functions.encrypt_block(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0xfedcba9876543210),
             Magma_functions.fix_bin(0x4ee901e5c2d8ca3d, 64)
         )
     
-    def test_check_decrypt(self):
+    def test_check_decrypt_block(self):
         self.assertEqual(
-            Magma_functions.decrypt(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0x4ee901e5c2d8ca3d),
+            Magma_functions.decrypt_block(0xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff, 0x4ee901e5c2d8ca3d),
             Magma_functions.fix_bin(0xfedcba9876543210, 64)
         )
 

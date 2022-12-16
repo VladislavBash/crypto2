@@ -7,26 +7,26 @@ pi =[[12, 4, 6, 2, 10, 5, 11, 9, 14, 8, 13, 7, 0, 3, 15, 1],
      [8, 14, 2, 5, 6, 9, 1, 12, 15, 4, 11, 0, 13, 10, 3, 7],
      [1, 7, 14, 13, 0, 5, 8, 3, 4, 15, 10, 6, 9, 12, 11, 2]]
 
-def fix_bin(num, length) -> str:
+def fix_bin(num: int, length: int) -> str:
     return bin(num)[2:].zfill(length)
 
-def gen_key_list(key) -> list:
+def gen_key_list(key: str) -> list:
     k_lst = []
     key = fix_bin(key, 256)
     for i in range(8):
         k_lst.append(key[32*i:32*(i+1)])
     return k_lst
 
-def complement_block(a) -> str:
+def complement_block(a: str) -> str:
     if len(a) % 32 == 0:
         return a
     else:
         return a + '1' + (32-1-len(a))*'0'
 
-def bit_shift(a) -> str:
+def bit_shift(a: str) -> str:
     return a[11:] + a[0:11]
 
-def a_to_list(a) -> list:
+def a_to_list(a: str) -> list:
     lst = []
     temp = ''
     for i in range(8):
@@ -34,7 +34,7 @@ def a_to_list(a) -> list:
         lst.append(temp)
     return lst
 
-def replacement_table(a) -> str:
+def replacement_table(a: str) -> str:
     res = ''
     q = ''
     a_lst = a_to_list(a)
@@ -42,17 +42,17 @@ def replacement_table(a) -> str:
         res += fix_bin(pi[7-i][int(a_lst[i],2)], 4)
     return res
 
-def summ_mod_2_step_32(a, k) -> int:
+def summ_mod_2_step_32(a: int, k: int) -> int:
     if type(a) == str:
         a = int(a, 2)
     if type(k) == str:
         k = int(k, 2)
     return (a + k) % pow(2, 32)
 
-def g(k, a) -> str:
+def g(k: int, a: int) -> str:
     return bit_shift(replacement_table(fix_bin(summ_mod_2_step_32(a, k), 32)))
 
-def G(k, a1, a0) -> tuple:
+def G(k: int, a1: int, a0: int) -> tuple:
     if type(a0) == str:
         a0 = int(a0, 2)
     if type(a1) == str:
@@ -60,7 +60,7 @@ def G(k, a1, a0) -> tuple:
     t = int(g(k, a0) , 2) ^ a1
     return (fix_bin(a0, 32), fix_bin(t, 32))
 
-def G_star(k, a1, a0) -> str:
+def G_star(k: int, a1: int, a0: int) -> str:
     # return (g(k, a0) ^ a1) + a0
     if type(a0) == str:
         a0 = int(a0, 2)
@@ -69,7 +69,7 @@ def G_star(k, a1, a0) -> str:
     t = int(g(k, a0) , 2) ^ a1
     return fix_bin(t, 32) + fix_bin(a0, 32)
 
-def get_encrypt_keys(k_lst) -> list:
+def get_encrypt_keys(k_lst: list) -> list:
     p = [i for i in k_lst]
     k = []
     k.extend(p)
@@ -79,7 +79,7 @@ def get_encrypt_keys(k_lst) -> list:
     k.extend(p)
     return k
 
-def encrypt(key, a) -> str:
+def encrypt_block(key, a) -> str:
     a = fix_bin(a, 64)
     a = complement_block(a)
     a1 = a[:32]
@@ -91,7 +91,7 @@ def encrypt(key, a) -> str:
         arg = G(k[i], arg[0], arg[1])
     return G_star(k[31], arg[0], arg[1])
 
-def get_decrypt_keys(k_lst) -> list:
+def get_decrypt_keys(k_lst: list) -> list:
     k = [i for i in k_lst]
     p = [i for i in reversed(k_lst)]
     k.extend(p)
@@ -99,7 +99,7 @@ def get_decrypt_keys(k_lst) -> list:
     k.extend(p)
     return k
 
-def decrypt(key, a) -> str:
+def decrypt_block(key, a) -> str:
     a = fix_bin(a, 64)
     a = complement_block(a)
     a1 = a[:32]
@@ -110,3 +110,29 @@ def decrypt(key, a) -> str:
     for i in range(31,0,-1):
         arg = G(k[i], arg[0], arg[1])
     return G_star(k[0], arg[0], arg[1])
+
+def encrypt(key: str, bit_word: str):
+    res = ''
+    # bit_word =''
+    # key = bin(int(key, 16))[2:]
+    key = int(key, 16)
+    # for letter in word:
+        # bit_word += bin(int(letter, 16))[2:].zfill(4)
+    # blocks_list = [bit_word[i:i+64] for i in range(0, len(bit_word), 64)]
+    blocks_list = [int(bit_word[i:i+64], 2) for i in range(0, len(bit_word), 64)]
+    for block in blocks_list:
+        res += encrypt_block(key, block)
+    return res
+
+def decrypt(key: str, bit_word: str):
+    res = ''
+    # bit_word =''
+    # key = bin(int(key, 16))[2:]
+    key = int(key, 16)
+    # for letter in word:
+        # bit_word += bin(int(letter, 16))[2:].zfill(4)
+    # blocks_list = [bit_word[i:i+64] for i in range(0, len(bit_word), 64)]
+    blocks_list = [int(bit_word[i:i+64], 2) for i in range(0, len(bit_word), 64)]
+    for block in blocks_list:
+        res += decrypt_block(key, block)
+    return res
