@@ -34,7 +34,7 @@ while True:
     print('Неправильный ввод, повторите попытку')
 
 while True:
-    chipering_choose = input('Введите:  \n 1 для чтения из open_text.txt (зашифрования) \n 2 для чтения из close_text.txt (расшифрования)  \n')
+    chipering_choose = input('Введите:  \n 1 для зашифрования \n 2 для расшифрования \n')
     if (chipering_choose == '1') or (chipering_choose == '2'):
         break
     print('Неправильный ввод, повторите попытку')
@@ -46,7 +46,7 @@ while True:
     print('Неправильный ввод, повторите попытку')
 
 if chipering_choose == '1':
-    fr = open('open_text.txt', encoding='utf-8')
+    fr = open('input.txt', encoding='utf-8')
     # text = []
     bin_text = ''
     while True:
@@ -60,7 +60,7 @@ if chipering_choose == '1':
             bin_text += bin(int(letter, 16))[2:].zfill(4)
         elif choose == '3':
             bin_text += letter
-    fw = open('close_text.txt', 'w', encoding='utf-8')
+    fw = open('output.txt', 'w', encoding='utf-8')
     # m = Magma_functions.get_encrypt_block(text, n)
     # sym = RSA_functions.encrypt(m, e, n)
     # fw.write(sym) 
@@ -78,7 +78,7 @@ if chipering_choose == '1':
         # fw.write(sym.encode('utf-8').decode('utf-8'))
 
 elif chipering_choose == '2':
-    fr = open('close_text.txt', encoding='utf-8')
+    fr = open('input.txt', encoding='utf-8')
     # text = []
     bin_text = ''
     while True:
@@ -92,7 +92,7 @@ elif chipering_choose == '2':
             bin_text += bin(int(letter, 16))[2:].zfill(4)
         elif choose == '3':
             bin_text += letter
-    fw = open('open_text.txt', 'w', encoding='utf-8')
+    fw = open('output.txt', 'w', encoding='utf-8')
     # c = Magma_functions.get_decrypt_block(text, n)
     sym = Magma_functions.decrypt(key, bin_text)
     if choose == '1':
